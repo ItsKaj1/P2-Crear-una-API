@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://localhost:3000/api/productos
+method: POST
+body:
+  type: json
+  content: '{"nombre":"","precio":-1}'
+order: 5000

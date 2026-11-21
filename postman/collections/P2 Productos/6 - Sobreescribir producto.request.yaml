@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://localhost:3000/api/productos/
+method: POST
+body:
+  type: json
+  content: '{"nombre":"Teclado RGB","precio":420,"stock":10}'
+order: 6000
