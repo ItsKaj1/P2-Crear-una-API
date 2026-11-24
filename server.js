@@ -1,11 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+const ORIGINES = (process.env.ORIGEN_PERMITIDO || "")
+.split(",")
+.map(origen => origen.trim())
+.filter(Boolean);
+
+app.use(cors({ origin: ORIGINES })); // solo estas paginas pueden usar la API
 app.use(express.json());
+
 
 let productos = [
   { id: 1, nombre: 'Teclado', precio: 350.00, stock: 10 },
@@ -13,6 +20,13 @@ let productos = [
 ];
 
 let siguienteId = 3;
+
+function requiereToken(req, res, next) {
+  if(req.get('x-api-key') !== process.env.API_KEY) {
+    return res.status(401).json({ error: "Token de API inválido" });
+  } 
+  next(); // el token es correcto
+}
 
 // Obtener todos los productos
 app.get("/", (req, res) => {
@@ -47,7 +61,7 @@ function validar(Datos) {
   return errores;
 }
 
-app.post("/api/productos", (req, res) => {
+app.post("/api/productos", requiereToken, (req, res) => {
   const errores = validar(req.body);
   if (errores.length > 0) {
     return res.status(400).json({ errores });
@@ -60,7 +74,7 @@ app.post("/api/productos", (req, res) => {
   res.status(201).json(nuevoProducto);
 });
 
-app.put("/api/productos/:id", (req, res) => {
+app.put("/api/productos/:id", requiereToken, (req, res) => {
   const id = Number(req.params.id);
   const productoIndex = productos.findIndex(p => p.id === id);
   if (productoIndex === -1) {
@@ -74,7 +88,7 @@ app.put("/api/productos/:id", (req, res) => {
   res.status(200).json(productos[productoIndex]);
 });
 
-app.delete("/api/productos/:id", (req, res) => {
+app.delete("/api/productos/:id", requiereToken, (req, res) => {
   const id = Number(req.params.id);
   const existe = productos.some(p => p.id === id);
   if (!existe) {

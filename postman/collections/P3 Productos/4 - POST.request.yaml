@@ -1,0 +1,9 @@
+$kind: http-request
+url: http://localhost:3000/api/productos
+method: POST
+headers:
+  x-api-key: llave_api_123
+body:
+  type: json
+  content: '{"nombre":"Tableta","precio":2500,"stock":15}'
+order: 4000

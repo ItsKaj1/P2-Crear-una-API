@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://localhost:3000/api/productos/1
+method: DELETE
+headers:
+  x-api-key: llave_api_123
+order: 5000
